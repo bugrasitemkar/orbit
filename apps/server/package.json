@@ -1,0 +1,18 @@
+{
+  "name": "@orbit/server",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "bun --watch src/index.ts",
+    "start": "bun src/index.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@orbit/trajectory": "workspace:*",
+    "chokidar": "^4.0.3",
+    "hono": "^4.6.20"
+  },
+  "devDependencies": {
+    "bun-types": "^1.4.0"
+  }
+}

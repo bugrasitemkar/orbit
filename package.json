@@ -1,0 +1,18 @@
+{
+  "name": "orbit",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "packageManager": "pnpm@11.25.0",
+  "scripts": {
+    "dev": "pnpm --parallel --filter @orbit/server --filter @orbit/web dev",
+    "dev:server": "pnpm --filter @orbit/server dev",
+    "dev:web": "pnpm --filter @orbit/web dev",
+    "build": "pnpm -r build",
+    "typecheck": "pnpm -r typecheck"
+  },
+  "devDependencies": {
+    "bun": "^1.2.0",
+    "typescript": "^5.7.3"
+  }
+}
