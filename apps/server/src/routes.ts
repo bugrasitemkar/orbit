@@ -2,11 +2,13 @@
  * REST API + static web serving.
  */
 import { existsSync } from 'node:fs'
+import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { Hono } from 'hono'
 import { serveStatic } from 'hono/bun'
 import { streamSSE } from 'hono/streaming'
 import { foldSession } from '@orbit/trajectory'
+import { zipSync } from 'fflate'
 import type { Database } from 'bun:sqlite'
 import {
   LIVE_WINDOW_MS,
@@ -214,7 +216,7 @@ export function createApp(db: Database): Hono<AppEnv> {
     return c.json({ ok: true })
   })
 
-  app.post('/api/sessions/:id/export', c => {
+  app.get('/api/sessions/:id/export', c => {
     const dbx = c.get('db')
     const session = getSession(dbx, c.req.param('id'))
     if (session === null) return c.json({ error: 'not found' }, 404)
@@ -240,6 +242,40 @@ export function createApp(db: Database): Hono<AppEnv> {
       headers: {
         'content-type': contentType,
         'content-disposition': `attachment; filename="orbit-${session.id}.${ext}"`,
+      },
+    })
+  })
+
+  app.get('/api/sessions/:id/export/raw', async c => {
+    const dbx = c.get('db')
+    const session = getSession(dbx, c.req.param('id'))
+    if (session === null) return c.json({ error: 'not found' }, 404)
+    const files = [
+      { name: `${session.id}.jsonl`, path: session.file_path },
+      ...childSessions(dbx, session.id).map(child => ({
+        name: `subagents/${child.id}.jsonl`,
+        path: child.file_path,
+      })),
+    ].filter(f => existsSync(f.path))
+    if (files.length === 0) return c.json({ error: 'no transcript files found on disk' }, 404)
+
+    if (files.length === 1) {
+      const buf = await readFile(files[0].path)
+      return new Response(buf, {
+        headers: {
+          'content-type': 'application/x-ndjson; charset=utf-8',
+          'content-disposition': `attachment; filename="${files[0].name}"`,
+        },
+      })
+    }
+
+    const entries: Record<string, Uint8Array> = {}
+    for (const f of files) entries[f.name] = await readFile(f.path)
+    const zipped = zipSync(entries)
+    return new Response(zipped, {
+      headers: {
+        'content-type': 'application/zip',
+        'content-disposition': `attachment; filename="orbit-${session.id}-transcripts.zip"`,
       },
     })
   })

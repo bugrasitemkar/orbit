@@ -97,6 +97,7 @@ export const api = {
   search: (q: string) => getJson<{ hits: SearchHit[] }>(`/api/search?q=${encodeURIComponent(q)}`),
   exportUrl: (id: string, format: 'html' | 'md' | 'json') =>
     `/api/sessions/${encodeURIComponent(id)}/export?format=${format}`,
+  exportRawUrl: (id: string) => `/api/sessions/${encodeURIComponent(id)}/export/raw`,
   resume: async (id: string): Promise<{ ok: boolean; error?: string }> => {
     const res = await fetch(`/api/sessions/${encodeURIComponent(id)}/resume`, { method: 'POST' })
     return res.json() as Promise<{ ok: boolean; error?: string }>

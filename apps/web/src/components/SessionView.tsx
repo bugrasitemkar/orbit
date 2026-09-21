@@ -123,6 +123,13 @@ export default function SessionView({ id, revision, focusSeq }: Props) {
                 </button>
               ))}
               <button
+                onClick={() => window.open(api.exportRawUrl(meta.id), '_blank')}
+                title="download the raw .jsonl transcript(s) from ~/.claude/projects, zipped if there are subagent transcripts"
+                className="rounded border border-edge bg-panel2 px-2 py-1 font-mono text-[9px] uppercase tracking-[0.12em] text-dim transition hover:border-neon/50 hover:text-neon"
+              >
+                raw
+              </button>
+              <button
                 onClick={() => void resume()}
                 className="flex items-center gap-1 rounded border border-viol/40 bg-viol/10 px-2 py-1 font-mono text-[9px] uppercase tracking-[0.12em] text-viol transition hover:glow-border-viol"
               >
