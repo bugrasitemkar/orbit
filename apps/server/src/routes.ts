@@ -320,7 +320,7 @@ export function createApp(db: Database): Hono<AppEnv> {
   }))
 
   // Static web app (built) with SPA fallback.
-  const webDist = join(import.meta.dir, '../../web/dist')
+  const webDist = process.env.ORBIT_WEB_DIST ?? join(import.meta.dir, '../../web/dist')
   app.use('*', serveStatic({ root: webDist }))
   app.get('*', c => {
     const index = join(webDist, 'index.html')

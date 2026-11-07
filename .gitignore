@@ -7,3 +7,4 @@ tmp-claude/
 .DS_Store
 .env
 .env.local
+release/

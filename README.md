@@ -74,6 +74,16 @@ While developing, open **http://localhost:5173**. Vite serves the UI with HMR an
 
 On first start, Orbit indexes every transcript under `~/.claude/projects` (a few hundred sessions take ~15s), then watches the folder for changes.
 
+### macOS app (DMG)
+
+```bash
+pnpm install --ignore-scripts
+./scripts/build-dmg.sh              # → release/Orbit-<version>-arm64.dmg
+ARCH=x64 ./scripts/build-dmg.sh     # Intel build
+```
+
+The DMG holds `Orbit.app`: a single compiled server binary plus the built UI. Launching it starts the server on `:4810` and opens your browser; the index lives in `~/Library/Application Support/Orbit`, logs in `~/Library/Logs/Orbit.log`. The app is ad-hoc signed, not notarized, so on first launch right-click → **Open** (or `xattr -dr com.apple.quarantine /Applications/Orbit.app`).
+
 ### Configuration (env vars)
 
 | Variable | Default | Purpose |
@@ -81,6 +91,7 @@ On first start, Orbit indexes every transcript under `~/.claude/projects` (a few
 | `PORT` | `4810` | API/UI port |
 | `ORBIT_DATA_DIR` | `<repo>/data` | SQLite index location (resolved from the server source, not the CWD) |
 | `ORBIT_CLAUDE_DIR` | `~/.claude/projects` | transcript root (useful for testing) |
+| `ORBIT_WEB_DIST` | `apps/web/dist` | built UI directory to serve |
 
 ### Troubleshooting
 
