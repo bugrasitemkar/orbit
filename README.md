@@ -34,10 +34,10 @@ Orbit is that viewer. Its trajectory model (turns, steps, cells with own-duratio
 | 🕰 **Trajectory timeline** | Turns → steps → cells (user / message / tool) with real durations, token columns and group histograms (`2m22s Bash`). Transcript ⇄ tool-rail toggle, plus a **scrubbing playhead** for time travel. |
 | 🕸 **Agent graph** | Main session + every spawned agent, reconstructed from task notifications *and* subagent transcripts, with status, tools, tokens and durations. |
 | ⚡ **Live tailing** | Watch a running session update in real time (watcher → reindex → SSE → browser, no refresh). |
-| 📊 **Analytics** | Stacked per-step token chart + cumulative cost curve, with configurable model pricing. |
+| 📊 **Analytics** | Stacked per-step token chart + cumulative cost curve, priced from a built-in model table (`packages/trajectory/src/pricing.ts`). |
 | 📝 **Diff view** | Every file touched by the session, rendered as red/green hunks from Edit/MultiEdit/Write calls. |
 | 🔎 **Ctrl+K search** | FTS5 full-text search across *every* session; Enter opens the session and jumps to the matching line. |
-| 📤 **Export & resume** | Self-contained HTML, Markdown or raw JSON export; one click resumes the session via `claude --resume`. |
+| 📤 **Export & resume** | Self-contained HTML, Markdown or JSON export plus raw JSONL transcript download; on Windows, one click resumes the session via `claude --resume`. |
 
 ## Screenshots
 
@@ -54,14 +54,15 @@ Orbit is that viewer. Its trajectory model (turns, steps, cells with own-duratio
 Prerequisites: **pnpm 11+** and **Node 18, 20 or 22+** (Bun is installed automatically as a dev dependency).
 
 ```bash
-git clone <your-repo-url> orbit
+git clone https://github.com/bugrasitemkar/orbit.git
 cd orbit
-pnpm install
+pnpm install --ignore-scripts
+(cd node_modules/bun && node install.js)   # link the bun binary, see Troubleshooting
 pnpm build                          # bundles the web app → apps/web/dist
 pnpm --filter @orbit/server start   # http://localhost:4810
 ```
 
-The server serves `apps/web/dist` as static files, so `pnpm build` must run first. There is no root `start` script, hence the `--filter`. If `pnpm install` fails on bun's postinstall, see [Troubleshooting](#troubleshooting).
+The server serves `apps/web/dist` as static files, so `pnpm build` must run first. There is no root `start` script, hence the `--filter`.
 
 Or hack on it:
 
@@ -95,7 +96,7 @@ The DMG holds `Orbit.app`: a single compiled server binary plus the built UI. La
 
 ### Troubleshooting
 
-**`pnpm install` fails with `Your package manager doesn't seem to support bun`**: bun's postinstall tries to `rename()` its platform binary out of pnpm's content-addressable store, which pnpm doesn't allow. Install once with `pnpm install --ignore-scripts`; the real binary links in from `@oven/bun-<platform>` on its own.
+**`pnpm install` fails with `Your package manager doesn't seem to support bun`**, or **`bun` says `Bun's postinstall script was not run`**: bun's postinstall tries to `rename()` its platform binary out of pnpm's content-addressable store, which pnpm doesn't allow. Install with `pnpm install --ignore-scripts`, then run `(cd node_modules/bun && node install.js)` once to link the binary from `@oven/bun-<platform>`.
 
 **`ERR_PNPM_EPERM` on Windows**: a previous server is still running and holding `bun.exe` open. Backgrounded dev servers outlive their shell, so strays accumulate:
 
@@ -128,6 +129,8 @@ apps/server            Bun + Hono indexer, SQLite, REST + SSE API
 apps/web               React 19 + Vite + Tailwind, the dark-neon UI
 packages/trajectory    shared parser, model, fold and pricing
 data/orbit.db          SQLite index (generated, gitignored)
+scripts/build-dmg.sh   macOS app + DMG packaging
+assets/icon.svg        app icon source
 SPEC.md                full design doc, incl. DSH-alignment notes
 ```
 
@@ -137,7 +140,9 @@ Orbit never leaves your machine: it reads `~/.claude` read-only, serves only loc
 
 ## Roadmap
 
-- [ ] Annotations: human notes on tool-call groups (schema is ready)
+- [ ] Annotations: human notes on tool-call groups
+- [ ] Resume from the UI on macOS and Linux (currently Windows only)
+- [ ] User-editable model pricing
 - [ ] Waterfall timing view of parallel tool execution
 - [ ] Full-file reconstruction from `file-history-snapshot` rows
 - [ ] Multi-machine/server mode for teams

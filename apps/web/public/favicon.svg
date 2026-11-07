@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1b1b3a"/>
+      <stop offset="0.55" stop-color="#0d0d1f"/>
+      <stop offset="1" stop-color="#05050d"/>
+    </linearGradient>
+    <radialGradient id="nebula" cx="0.5" cy="0.45" r="0.55">
+      <stop offset="0" stop-color="#7c3aed" stop-opacity="0.35"/>
+      <stop offset="0.6" stop-color="#22d3ee" stop-opacity="0.06"/>
+      <stop offset="1" stop-color="#000" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="planet" cx="0.36" cy="0.32" r="0.75">
+      <stop offset="0" stop-color="#e0fbff"/>
+      <stop offset="0.25" stop-color="#67e8f9"/>
+      <stop offset="0.6" stop-color="#6d5ce8"/>
+      <stop offset="1" stop-color="#1e1250"/>
+    </radialGradient>
+    <radialGradient id="halo" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0.45" stop-color="#22d3ee" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#22d3ee" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="ringA" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#22d3ee" stop-opacity="0.15"/>
+      <stop offset="0.5" stop-color="#22d3ee"/>
+      <stop offset="1" stop-color="#a78bfa" stop-opacity="0.9"/>
+    </linearGradient>
+    <linearGradient id="ringB" x1="1" y1="0" x2="0" y2="0">
+      <stop offset="0" stop-color="#f0abfc" stop-opacity="0.1"/>
+      <stop offset="0.5" stop-color="#a78bfa"/>
+      <stop offset="1" stop-color="#22d3ee" stop-opacity="0.6"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="9" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="softglow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <clipPath id="tile"><rect x="100" y="100" width="824" height="824" rx="186"/></clipPath>
+    <!-- front half of the rings, drawn over the planet -->
+    <clipPath id="front"><rect x="-200" y="512" width="1424" height="700"/></clipPath>
+  </defs>
+
+  <g clip-path="url(#tile)">
+    <rect x="100" y="100" width="824" height="824" fill="url(#bg)"/>
+    <rect x="100" y="100" width="824" height="824" fill="url(#nebula)"/>
+    <!-- stars -->
+    <g fill="#fff">
+      <circle cx="210" cy="230" r="3" opacity="0.8"/>
+      <circle cx="320" cy="180" r="2" opacity="0.5"/>
+      <circle cx="780" cy="210" r="3.5" opacity="0.9"/>
+      <circle cx="840" cy="330" r="2" opacity="0.5"/>
+      <circle cx="180" cy="720" r="2.5" opacity="0.6"/>
+      <circle cx="260" cy="830" r="2" opacity="0.4"/>
+      <circle cx="800" cy="800" r="3" opacity="0.7"/>
+      <circle cx="690" cy="150" r="2" opacity="0.5"/>
+      <circle cx="150" cy="450" r="2" opacity="0.45"/>
+      <circle cx="880" cy="600" r="2.5" opacity="0.55"/>
+    </g>
+    <path d="M770 260 l0 -22 M759 249 l22 0" stroke="#e0fbff" stroke-width="3" stroke-linecap="round" opacity="0.9" transform="translate(10 -40)"/>
+
+    <!-- back halves of the rings -->
+    <g fill="none" stroke-linecap="round">
+      <ellipse cx="512" cy="512" rx="330" ry="112" transform="rotate(-24 512 512)" stroke="url(#ringA)" stroke-width="14" opacity="0.55"/>
+      <ellipse cx="512" cy="512" rx="300" ry="96" transform="rotate(32 512 512)" stroke="url(#ringB)" stroke-width="10" opacity="0.45"/>
+    </g>
+
+    <!-- planet -->
+    <circle cx="512" cy="512" r="210" fill="url(#halo)"/>
+    <circle cx="512" cy="512" r="150" fill="url(#planet)"/>
+    <path d="M400 470 q112 -40 224 0" stroke="#e0fbff" stroke-opacity="0.18" stroke-width="10" fill="none" stroke-linecap="round"/>
+    <path d="M390 548 q122 44 244 0" stroke="#1e1250" stroke-opacity="0.35" stroke-width="12" fill="none" stroke-linecap="round"/>
+
+    <!-- front halves of the rings (split along each ring's own major axis) -->
+    <g fill="none" stroke-linecap="round" filter="url(#glow)">
+      <g transform="rotate(-24 512 512)"><g clip-path="url(#front)">
+        <ellipse cx="512" cy="512" rx="330" ry="112" stroke="url(#ringA)" stroke-width="14"/>
+      </g></g>
+      <g transform="rotate(32 512 512)"><g clip-path="url(#front)">
+        <ellipse cx="512" cy="512" rx="300" ry="96" stroke="url(#ringB)" stroke-width="10"/>
+      </g></g>
+    </g>
+    <g filter="url(#softglow)">
+      <circle cx="210" cy="646" r="22" fill="#22d3ee"/>
+      <circle cx="210" cy="646" r="9" fill="#e0fbff"/>
+      <circle cx="772" cy="682" r="16" fill="#c4b5fd"/>
+      <circle cx="772" cy="682" r="6" fill="#fff"/>
+      <circle cx="810" cy="376" r="11" fill="#22d3ee" opacity="0.8"/>
+    </g>
+
+    <!-- subtle top highlight -->
+    <rect x="100" y="100" width="824" height="824" rx="186" fill="none" stroke="#ffffff" stroke-opacity="0.08" stroke-width="4"/>
+  </g>
+</svg>

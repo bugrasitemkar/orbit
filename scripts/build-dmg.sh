@@ -3,6 +3,7 @@
 #   ./scripts/build-dmg.sh            # host arch
 #   ARCH=x64 ./scripts/build-dmg.sh   # Intel build (cross-compiled)
 set -euo pipefail
+command -v rsvg-convert >/dev/null || { echo "rsvg-convert required: brew install librsvg" >&2; exit 1; }
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
@@ -29,6 +30,16 @@ mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
   --target="bun-darwin-$ARCH" \
   --outfile "$APP/Contents/Resources/orbit-server"
 cp -R apps/web/dist "$APP/Contents/Resources/web"
+
+echo "◤ Rendering icon"
+ICONSET="$(mktemp -d)/Orbit.iconset"
+mkdir -p "$ICONSET"
+for SZ in 16 32 128 256 512; do
+  rsvg-convert -w $SZ -h $SZ assets/icon.svg -o "$ICONSET/icon_${SZ}x${SZ}.png"
+  rsvg-convert -w $((SZ*2)) -h $((SZ*2)) assets/icon.svg -o "$ICONSET/icon_${SZ}x${SZ}@2x.png"
+done
+iconutil -c icns "$ICONSET" -o "$APP/Contents/Resources/Orbit.icns"
+rm -rf "$(dirname "$ICONSET")"
 
 cat > "$APP/Contents/MacOS/Orbit" <<'LAUNCHER'
 #!/bin/bash
@@ -70,6 +81,7 @@ cat > "$APP/Contents/Info.plist" <<PLIST
   <key>CFBundleVersion</key><string>$VERSION</string>
   <key>CFBundleShortVersionString</key><string>$VERSION</string>
   <key>CFBundleExecutable</key><string>Orbit</string>
+  <key>CFBundleIconFile</key><string>Orbit</string>
   <key>CFBundlePackageType</key><string>APPL</string>
   <key>LSMinimumSystemVersion</key><string>11.0</string>
   <key>NSHighResolutionCapable</key><true/>
